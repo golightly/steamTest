@@ -358,8 +358,19 @@ int main(int argc, const char **argv)
 #endif
 */
 
+/*to do:
+test (today)
+opengl version (today)
+test (today)
+minimal network test (july 4)
+research sfml voice chat (?) (july 4)
+write minimal voice chat program (july 4)
+write minimal realtime networking test program with voice chat (july 4)
+*/
+
 #include "steam/steam_api.h"
 #include <SDL.h>
+#include <SDL_image.h>
 
 int main(int argc, char* args[]) {
 	if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) )
