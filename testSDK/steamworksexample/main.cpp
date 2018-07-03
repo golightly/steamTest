@@ -26,7 +26,7 @@
 #endif
 
 #include "SpaceWarClient.h"*/
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Wrapper around SteamAPI_WriteMiniDump which can be used directly 
 // as a se translator
@@ -43,7 +43,7 @@ void MiniDumpFunction( unsigned int nExceptionCode, EXCEPTION_POINTERS *pExcepti
 	SteamAPI_WriteMiniDump( nExceptionCode, pException, 0 );
 }
 #endif
-
+*/
 /*
 //-----------------------------------------------------------------------------
 // Purpose: Helper to display critical errors
