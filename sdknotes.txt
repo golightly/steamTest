@@ -1,0 +1,164 @@
+if the preprocessor definitions in the project settings define win32 (as opposed to osx or sdl)
+
+main.cpp -> int APIENTRY WinMain(HINSTANCE hInstance,
+					 HINSTANCE hPrevInstance,
+					 LPSTR     lpCmdLine,
+					 int       nCmdShow)
+
+if debugging, goes straight to realmain, if not, enables handling of win32 exceptions (se, structured exceptions) _set_se_translator( MiniDumpFunction) and then goes to realmain
+
+main.cpp -> void MiniDumpFunction( unsigned int nExceptionCode, EXCEPTION_POINTERS *pException )
+
+this function handles exceptions, writes a comment for the dump (which can be set here) and writes the relevant exception code
+
+main.cpp -> static int RealMain( const char *pchCmdLine, HINSTANCE hInstance, int nCmdShow )
+
+restarts app if not started through steam, launches steam and relaunches the app
+
+initialises the ceg library, which does something related to steam ceg, which is another form of drm
+
+initialises the steam api
+
+set debug handler:
+
+main.cpp -> SteamClient()->SetWarningMessageHook( &SteamAPIDebugTextHook );
+
+main.cpp -> extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDebugText )
+{
+	// if you're running in the debugger, only warnings (nSeverity >= 1) will be sent
+	// if you add -debug_steamapi to the command-line, a lot of extra informational messages will also be sent
+	::OutputDebugString( pchDebugText );
+
+	if ( nSeverity >= 1 )
+	{
+		// place to set a breakpoint for catching API errors
+		int x = 3;
+		(void)x;
+	}
+}
+
+main.cpp -> SteamUser()->BLoggedOn()
+
+checks that user is logged in to steam when the program is launched
+
+steam controller setup stuff
+
+get server address and lobby id (?)
+
+http://www.cplusplus.com/reference/cstring/strstr/
+^
+"Returns a pointer to the first occurrence of str2 in str1, or a null pointer if str2 is not part of str1.
+The matching process does not include the terminating null-characters, but it stops there."
+
+const char *pchServerAddress, *pchLobbyID;
+ParseCommandLine( pchCmdLine, &pchServerAddress, &pchLobbyID );
+
+pchCmdLine is the win32 command line argument, lpCmdLine, renamed
+
+void ParseCommandLine( const char *pchCmdLine, const char **ppchServerAddress, const char **ppchLobbyID ) {
+	// Look for the +connect ipaddress:port parameter in the command line,
+	// Steam will pass this when a user has used the Steam Server browser to find
+	// a server for our game and is trying to join it. 
+	const char *pchConnectParam = "+connect";
+	const char *pchConnect = strstr( pchCmdLine, pchConnectParam );
+	*ppchServerAddress = NULL;
+	if ( pchConnect && strlen( pchCmdLine ) > (pchConnect - pchCmdLine) + strlen( pchConnectParam ) + 1 )
+	{
+		// Address should be right after the +connect, +1 on the end to skip the space
+		*ppchServerAddress = pchCmdLine + ( pchConnect - pchCmdLine ) + strlen( pchConnectParam ) + 1;
+	}
+
+	// look for +connect_lobby lobbyid paramter on the command line
+	// Steam will pass this in if a user taken up an invite to a lobby
+	const char *pchConnectLobbyParam = "+connect_lobby";
+	const char *pchConnectLobby = strstr( pchCmdLine, pchConnectParam );
+	*ppchLobbyID = NULL;
+	if ( pchConnectLobby && strlen( pchCmdLine ) > (pchConnectLobby - pchCmdLine) + strlen( pchConnectLobbyParam ) + 1 )
+	{
+		// Address should be right after the +connect, +1 on the end to skip the space
+		*ppchLobbyID = pchCmdLine + ( pchConnectLobby - pchCmdLine ) + strlen( pchConnectLobbyParam ) + 1;
+	}
+}
+
+
+another drm check thing
+
+setup game engine: (among other things, contains stuff for voice, input, steam controller, directx graphics stuff, window creation, 
+
+this engine stuff is all in gameenginewin32.cpp
+
+IGameEngine *pGameEngine =
+#if defined(_WIN32)
+		new CGameEngineWin32( hInstance, nCmdShow, 1024, 768 );
+		
+hinstance and nCmdShow are win32 stuff, the rest is the resolution
+
+runs game loop, passes engine, server address and lobby id
+
+	// This call will block and run until the game exits
+	RunGameLoop( pGameEngine, pchServerAddress, pchLobbyID );
+
+once game loop is done, program shuts down:
+
+// Shutdown the SteamAPI
+	SteamAPI_Shutdown();
+
+	// Shutdown Steam CEG
+	Steamworks_TermCEGLibrary();
+
+	// exit
+	return EXIT_SUCCESS;
+	
+main.cpp -> void RunGameLoop( IGameEngine *pGameEngine, const char *pchServerAddress, const char *pchLobbyID
+
+receives engine, checks if it initialised ok, and server address and lobby id
+
+// Initialize the game
+		CSpaceWarClient *pGameClient = new CSpaceWarClient( pGameEngine );
+		
+SpaceWarClient.cpp -> CSpaceWarClient::CSpaceWarClient( IGameEngine *pGameEngine )
+{
+	Init( pGameEngine );
+}
+
+SpaceWarClient.cpp -> void CSpaceWarClient::Init( IGameEngine *pGameEngine )
+
+does the rest of setup for the engine, specific to this product
+
+RunGameLoop sets the background colour
+
+if the command line was uses to specify a server address, connects to it
+
+then it does something called Steamworks_TestSecret()
+
+and pGameClient->RetrieveEncryptedAppTicket();
+
+this is another form of drm outlined here https://partner.steamgames.com/doc/features/auth#encryptedapptickets
+
+then there's the game loop, which is subject to a framerate, except for network activity
+
+directx9 included in c:program files location
+
+in linker->general->additiona library directories:
+../redistributable_bin
+../public/steam/lib/win32
+
+in c++->general->additional include directories:
+../public
+
+in linker->input->additional dependencies:
+steam_api.lib
+sdkencryptedappticket.lib
+d3dx9.lib
+
+required dlls
+steam_api.dll (essential)
+sdkencryptedappticket.dll (can probably be removed)
+
+look into voice stuff
+preprocessor definitions, precompiled headers
+
+find out if directx can be removed (whether required for steam api or just for voice stuff, or neither)
+
+https://partner.steamgames.com/doc/sdk
+
