@@ -4,9 +4,9 @@
 //
 //=============================================================================
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "steam/steam_api.h"
-#ifdef WIN32
+/*#ifdef WIN32
 #include <direct.h>
 #else
 #define MAX_PATH PATH_MAX
@@ -25,7 +25,7 @@
 	extern IGameEngine *CreateGameEngineSDL( );
 #endif
 
-#include "SpaceWarClient.h"
+#include "SpaceWarClient.h"*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Wrapper around SteamAPI_WriteMiniDump which can be used directly 
@@ -44,7 +44,7 @@ void MiniDumpFunction( unsigned int nExceptionCode, EXCEPTION_POINTERS *pExcepti
 }
 #endif
 
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Helper to display critical errors
 //-----------------------------------------------------------------------------
@@ -74,8 +74,8 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 		(void)x;
 	}
 }
-
-
+*/
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Extracts some feature from the command line
 //-----------------------------------------------------------------------------
@@ -105,8 +105,8 @@ void ParseCommandLine( const char *pchCmdLine, const char **ppchServerAddress, c
 	}
 
 }
-
-
+*/
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Main loop code shared between all platforms
 //-----------------------------------------------------------------------------
@@ -154,8 +154,8 @@ void RunGameLoop( IGameEngine *pGameEngine, const char *pchServerAddress, const 
 	// Cleanup the game engine
 	delete pGameEngine;
 }
-
-
+*/
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Real main entry point for the program
 //-----------------------------------------------------------------------------
@@ -356,3 +356,33 @@ int main(int argc, const char **argv)
     return RealMain( szCmdLine, 0, 0 );
 }
 #endif
+*/
+
+#include <SDL.h>
+
+int main(int argc, char* args[]) {
+	SDL_Imit(SDL_INIT_VIDEO);
+	SDL_Window* window = SDL_CreateWindow("steam sdl test", SDL_WINDOWPOS_UNDEFINED, SD_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+	SDL_Renderer* renderer = SDL_Create_Renderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawColor(render, 0, 0, 0, 0);
+	IMG_Init(IMG_INIT_PNG);
+	SDL_Surface* surface = IMG_Load("test.png");
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+	bool quit = false;
+	SDL_Event event;
+	while(!quit) {
+		while(SDL_PollEvent(&event) != 0) {
+			if(event.type == SDL_QUIT)
+				quit = true;
+		}
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+	}
+	SDL_DestroyTexture(texture);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	IMG_Quit();
+	SDL_Quit();
+}
