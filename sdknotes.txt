@@ -175,3 +175,5 @@ https://partner.steamgames.com/doc/features/multiplayer/networking
 
 redistributables:
 https://partner.steamgames.com/doc/features/common_redist
+
+_WIN32 is defined by default so you don't need to worry about it (probably).  WIN32 is not, and relates to directx.
