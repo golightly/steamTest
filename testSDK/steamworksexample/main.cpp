@@ -5,7 +5,7 @@
 //=============================================================================
 
 //#include "stdafx.h"
-#include "steam/steam_api.h"
+//#include "steam/steam_api.h"
 /*#ifdef WIN32
 #include <direct.h>
 #else
@@ -358,9 +358,27 @@ int main(int argc, const char **argv)
 #endif
 */
 
+#include "steam/steam_api.h"
 #include <SDL.h>
 
 int main(int argc, char* args[]) {
+	if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) )
+	{
+		// if Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
+		// local Steam client and also launches this game again.
+		
+		// Once you get a public Steam AppID assigned for this game, you need to replace k_uAppIdInvalid with it and
+		// removed steam_appid.txt from the game depot.
+		return 0;
+	}
+	if ( !SteamAPI_Init() )
+	{
+		return 0;
+	}
+	if ( !SteamUser()->BLoggedOn() )
+	{
+		return 0;
+	}
 	SDL_Imit(SDL_INIT_VIDEO);
 	SDL_Window* window = SDL_CreateWindow("steam sdl test", SDL_WINDOWPOS_UNDEFINED, SD_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
 	SDL_Renderer* renderer = SDL_Create_Renderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -385,4 +403,6 @@ int main(int argc, char* args[]) {
 	SDL_DestroyWindow(window);
 	IMG_Quit();
 	SDL_Quit();
+	SteamAPI_Shutdown();
+	return 0;
 }
