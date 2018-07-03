@@ -162,3 +162,16 @@ find out if directx can be removed (whether required for steam api or just for v
 
 https://partner.steamgames.com/doc/sdk
 
+steamworks overlay requires that opengl, directx etc. be used, and that steam be setup first
+
+cloud saves cn be setup with minimal to no coding https://partner.steamgames.com/doc/features/cloud
+
+achievements https://partner.steamgames.com/doc/features/achievements
+
+multiplayer:
+https://partner.steamgames.com/doc/features/multiplayer
+https://partner.steamgames.com/doc/features/multiplayer/matchmaking
+https://partner.steamgames.com/doc/features/multiplayer/networking
+
+redistributables:
+https://partner.steamgames.com/doc/features/common_redist
