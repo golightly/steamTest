@@ -1,33 +1,8 @@
-﻿  BaseMenu.cpp
-  clanchatroom.cpp
-  connectingmenu.cpp
-  Friends.cpp
-  gameenginewin32.cpp
-  htmlsurface.cpp
-  Inventory.cpp
-  Leaderboards.cpp
-  Lobby.cpp
-  Main.cpp
-  MainMenu.cpp
-  musicplayer.cpp
-  p2pauth.cpp
-  PhotonBeam.cpp
-  QuitMenu.cpp
-  RemoteStorage.cpp
-  ServerBrowser.cpp
-  Ship.cpp
-  SpaceWarClient.cpp
-  SpaceWarEntity.cpp
-  Compiling...
-  SpaceWarServer.cpp
-  StarField.cpp
-  StatsAndAchievements.cpp
-  stdafx.cpp
-  Sun.cpp
-  VectorEntity.cpp
-  voicechat.cpp
+﻿     Creating library win64\Release\SteamworksExample.lib and object win64\Release\SteamworksExample.exp
   Generating code
-  All 3169 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  356 of 362 functions (98.3%) were compiled, the rest were copied from previous compilation.
+    355 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   SteamworksExample.vcxproj -> C:\Users\Nick\Desktop\testSDK\steamworksexample\win64\Release\SteamworksExample.exe
           1 file(s) copied.

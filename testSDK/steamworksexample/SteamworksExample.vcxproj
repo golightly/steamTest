@@ -80,15 +80,15 @@
     <OutDir>.\$(Configuration)\</OutDir>
     <IntDir>.\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDL2-2.0.7\lib\x86;C:\freeglut\lib;C:\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>win64\$(Configuration)\</OutDir>
     <IntDir>win64\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDL2-2.0.7\lib\x64;C:\freeglut\lib\x64;C:\glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CustomBuildStep>
@@ -165,7 +165,7 @@ copy ..\public\steam\lib\win64\sdkencryptedappticket64.dll $(OutDir)
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>steam_api.lib;sdkencryptedappticket.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>steam_api.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\redistributable_bin;..\public\steam\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -196,7 +196,7 @@ copy ..\public\steam\lib\win32\sdkencryptedappticket.dll $(OutDir)
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>steam_api64.lib;sdkencryptedappticket64.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>steam_api64.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\redistributable_bin\win64;..\public\steam\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -211,65 +211,17 @@ copy ..\public\steam\lib\win64\sdkencryptedappticket64.dll $(OutDir)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseMenu.cpp" />
-    <ClCompile Include="clanchatroom.cpp" />
-    <ClCompile Include="connectingmenu.cpp" />
-    <ClCompile Include="Friends.cpp" />
-    <ClCompile Include="gameenginewin32.cpp" />
-    <ClCompile Include="htmlsurface.cpp" />
-    <ClCompile Include="Inventory.cpp" />
-    <ClCompile Include="Leaderboards.cpp" />
-    <ClCompile Include="Lobby.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="musicplayer.cpp" />
-    <ClCompile Include="p2pauth.cpp" />
-    <ClCompile Include="PhotonBeam.cpp" />
-    <ClCompile Include="QuitMenu.cpp" />
-    <ClCompile Include="RemoteStorage.cpp" />
-    <ClCompile Include="ServerBrowser.cpp" />
-    <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="SpaceWarClient.cpp" />
-    <ClCompile Include="SpaceWarEntity.cpp" />
-    <ClCompile Include="SpaceWarServer.cpp" />
-    <ClCompile Include="StarField.cpp" />
-    <ClCompile Include="StatsAndAchievements.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Sun.cpp" />
-    <ClCompile Include="VectorEntity.cpp" />
-    <ClCompile Include="voicechat.cpp" />
+    <ClCompile Include="image.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="overhead.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="texAttribute.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseMenu.h" />
-    <ClInclude Include="clanchatroom.h" />
-    <ClInclude Include="connectingmenu.h" />
-    <ClInclude Include="Friends.h" />
-    <ClInclude Include="GameEngine.h" />
-    <ClInclude Include="gameenginewin32.h" />
-    <ClInclude Include="htmlsurface.h" />
-    <ClInclude Include="Inventory.h" />
-    <ClInclude Include="Leaderboards.h" />
-    <ClInclude Include="Lobby.h" />
-    <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Messages.h" />
-    <ClInclude Include="musicplayer.h" />
-    <ClInclude Include="p2pauth.h" />
-    <ClInclude Include="PhotonBeam.h" />
-    <ClInclude Include="QuitMenu.h" />
-    <ClInclude Include="RemoteStorage.h" />
-    <ClInclude Include="ServerBrowser.h" />
-    <ClInclude Include="ServerBrowserMenu.h" />
-    <ClInclude Include="Ship.h" />
-    <ClInclude Include="SpaceWar.h" />
-    <ClInclude Include="SpaceWarClient.h" />
-    <ClInclude Include="SpaceWarEntity.h" />
-    <ClInclude Include="SpaceWarServer.h" />
-    <ClInclude Include="StarField.h" />
-    <ClInclude Include="StatsAndAchievements.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Sun.h" />
-    <ClInclude Include="VectorEntity.h" />
-    <ClInclude Include="voicechat.h" />
+    <ClInclude Include="image.h" />
+    <ClInclude Include="overhead.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="texAttribute.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
