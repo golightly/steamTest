@@ -80,15 +80,15 @@
     <OutDir>.\$(Configuration)\</OutDir>
     <IntDir>.\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SDL2-2.0.7\lib\x86;C:\freeglut\lib;C:\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;C:\SDL2_image-2.0.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDL2-2.0.7\lib\x86;C:\freeglut\lib;C:\glew-2.1.0\lib\Release\Win32;C:\SDL2_image-2.0.2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>win64\$(Configuration)\</OutDir>
     <IntDir>win64\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SDL2-2.0.7\lib\x64;C:\freeglut\lib\x64;C:\glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\SDL2-2.0.7\include;C:\freeglut\include;C:\glew-2.1.0\include;C:\SDL2_image-2.0.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDL2-2.0.7\lib\x64;C:\freeglut\lib\x64;C:\glew-2.1.0\lib\Release\x64;C:\SDL2_image-2.0.2\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CustomBuildStep>
@@ -165,7 +165,7 @@ copy ..\public\steam\lib\win64\sdkencryptedappticket64.dll $(OutDir)
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>steam_api.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>steam_api.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies);SDL2_image.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\redistributable_bin;..\public\steam\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -196,7 +196,7 @@ copy ..\public\steam\lib\win32\sdkencryptedappticket.dll $(OutDir)
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>steam_api64.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>steam_api64.lib;SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;freeglut.lib;%(AdditionalDependencies);SDL2_image.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\redistributable_bin\win64;..\public\steam\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

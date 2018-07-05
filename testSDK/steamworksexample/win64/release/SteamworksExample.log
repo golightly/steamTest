@@ -1,9 +1,0 @@
-﻿     Creating library win64\Release\SteamworksExample.lib and object win64\Release\SteamworksExample.exp
-  Generating code
-  356 of 362 functions (98.3%) were compiled, the rest were copied from previous compilation.
-    355 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  SteamworksExample.vcxproj -> C:\Users\Nick\Desktop\testSDK\steamworksexample\win64\Release\SteamworksExample.exe
-          1 file(s) copied.
-          1 file(s) copied.

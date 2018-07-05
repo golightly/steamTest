@@ -4,365 +4,194 @@
 //
 //=============================================================================
 
-//#include "stdafx.h"
-//#include "steam/steam_api.h"
-/*#ifdef WIN32
-#include <direct.h>
-#else
-#define MAX_PATH PATH_MAX
-#include <unistd.h>
-#define _getcwd getcwd
-#endif
-#if defined(WIN32)
-#include "gameenginewin32.h"
-#define atoll _atoi64
-#elif defined(OSX)
-#include "GameEngine.h"
-extern IGameEngine *CreateGameEngineOSX();
-#elif defined(SDL)
-#include "GameEngine.h"
-extern IGameEngine *CreateGameEngineSDL( );
-#endif
-#include "SpaceWarClient.h"*/
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Wrapper around SteamAPI_WriteMiniDump which can be used directly
-// as a se translator
-//-----------------------------------------------------------------------------
-#ifdef _WIN32
-void MiniDumpFunction( unsigned int nExceptionCode, EXCEPTION_POINTERS *pException )
-{
-// You can build and set an arbitrary comment to embed in the minidump here,
-// maybe you want to put what level the user was playing, how many players on the server,
-// how much memory is free, etc...
-SteamAPI_SetMiniDumpComment( "Minidump comment: SteamworksExample.exe\n" );
-// The 0 here is a build ID, we don't set it
-SteamAPI_WriteMiniDump( nExceptionCode, pException, 0 );
-}
-#endif
-*/
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Helper to display critical errors
-//-----------------------------------------------------------------------------
-int Alert( const char *lpCaption, const char *lpText )
-{
-#ifndef _WIN32
-fprintf( stderr, "Message: '%s', Detail: '%s'\n", lpCaption, lpText );
-return 0;
-#else
-return ::MessageBox( NULL, lpText, lpCaption, MB_OK );
-#endif
-}
-//-----------------------------------------------------------------------------
-// Purpose: callback hook for debug text emitted from the Steam API
-//-----------------------------------------------------------------------------
-extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDebugText )
-{
-// if you're running in the debugger, only warnings (nSeverity >= 1) will be sent
-// if you add -debug_steamapi to the command-line, a lot of extra informational messages will also be sent
-::OutputDebugString( pchDebugText );
-if ( nSeverity >= 1 )
-{
-// place to set a breakpoint for catching API errors
-int x = 3;
-(void)x;
-}
-}
-*/
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Extracts some feature from the command line
-//-----------------------------------------------------------------------------
-void ParseCommandLine( const char *pchCmdLine, const char **ppchServerAddress, const char **ppchLobbyID )
-{
-// Look for the +connect ipaddress:port parameter in the command line,
-// Steam will pass this when a user has used the Steam Server browser to find
-// a server for our game and is trying to join it.
-const char *pchConnectParam = "+connect";
-const char *pchConnect = strstr( pchCmdLine, pchConnectParam );
-*ppchServerAddress = NULL;
-if ( pchConnect && strlen( pchCmdLine ) > (pchConnect - pchCmdLine) + strlen( pchConnectParam ) + 1 )
-{
-// Address should be right after the +connect, +1 on the end to skip the space
-*ppchServerAddress = pchCmdLine + ( pchConnect - pchCmdLine ) + strlen( pchConnectParam ) + 1;
-}
-// look for +connect_lobby lobbyid paramter on the command line
-// Steam will pass this in if a user taken up an invite to a lobby
-const char *pchConnectLobbyParam = "+connect_lobby";
-const char *pchConnectLobby = strstr( pchCmdLine, pchConnectParam );
-*ppchLobbyID = NULL;
-if ( pchConnectLobby && strlen( pchCmdLine ) > (pchConnectLobby - pchCmdLine) + strlen( pchConnectLobbyParam ) + 1 )
-{
-// Address should be right after the +connect, +1 on the end to skip the space
-*ppchLobbyID = pchCmdLine + ( pchConnectLobby - pchCmdLine ) + strlen( pchConnectLobbyParam ) + 1;
-}
-}
-*/
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Main loop code shared between all platforms
-//-----------------------------------------------------------------------------
-void RunGameLoop( IGameEngine *pGameEngine, const char *pchServerAddress, const char *pchLobbyID )
-{
-// Make sure it initialized ok
-if ( pGameEngine->BReadyForUse() )
-{
-// Initialize the game
-CSpaceWarClient *pGameClient = new CSpaceWarClient( pGameEngine );
-// Black background
-pGameEngine->SetBackgroundColor( 0, 0, 0, 0 );
-// If +connect was used to specify a server address, connect now
-pGameClient->ExecCommandLineConnect( pchServerAddress, pchLobbyID );
-// test a user specific secret before entering main loop
-Steamworks_TestSecret();
-pGameClient->RetrieveEncryptedAppTicket();
-while( !pGameEngine->BShuttingDown() )
-{
-if ( pGameEngine->StartFrame() )
-{
-pGameEngine->UpdateGameTickCount();
-// Run a game frame
-pGameClient->RunFrame();
-pGameEngine->EndFrame();
-// Sleep to limit frame rate
-while( pGameEngine->BSleepForFrameRateLimit( MAX_CLIENT_AND_SERVER_FPS ) )
-{
-// Keep running the network on the client at a faster rate than the FPS limit
-pGameClient->ReceiveNetworkData();
-}
-}
-}
-delete pGameClient;
-}
-// Cleanup the game engine
-delete pGameEngine;
-}
-*/
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Real main entry point for the program
-//-----------------------------------------------------------------------------
-#ifndef _PS3
-static int RealMain( const char *pchCmdLine, HINSTANCE hInstance, int nCmdShow )
-{
-
-if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) )
-{
-// if Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the
-// local Steam client and also launches this game again.
-
-// Once you get a public Steam AppID assigned for this game, you need to replace k_uAppIdInvalid with it and
-// removed steam_appid.txt from the game depot.
-return EXIT_FAILURE;
-}
-
-// Init Steam CEG
-if ( !Steamworks_InitCEGLibrary() )
-{
-OutputDebugString( "Steamworks_InitCEGLibrary() failed\n" );
-Alert( "Fatal Error", "Steam must be running to play this game (InitDrmLibrary() failed).\n" );
-return EXIT_FAILURE;
-}
-// Initialize SteamAPI, if this fails we bail out since we depend on Steam for lots of stuff.
-// You don't necessarily have to though if you write your code to check whether all the Steam
-// interfaces are NULL before using them and provide alternate paths when they are unavailable.
-//
-// This will also load the in-game steam overlay dll into your process.  That dll is normally
-// injected by steam when it launches games, but by calling this you cause it to always load,
-// even when not launched via steam.
-if ( !SteamAPI_Init() )
-{
-OutputDebugString( "SteamAPI_Init() failed\n" );
-Alert( "Fatal Error", "Steam must be running to play this game (SteamAPI_Init() failed).\n" );
-return EXIT_FAILURE;
-}
-// set our debug handler
-SteamClient()->SetWarningMessageHook( &SteamAPIDebugTextHook );
-// Ensure that the user has logged into Steam. This will always return true if the game is launched
-// from Steam, but if Steam is at the login prompt when you run your game from the debugger, it
-// will return false.
-if ( !SteamUser()->BLoggedOn() )
-{
-OutputDebugString( "Steam user is not logged in\n" );
-Alert( "Fatal Error", "Steam user must be logged in to play this game (SteamUser()->BLoggedOn() returned false).\n" );
-return EXIT_FAILURE;
-}
-// We are going to use the controller interface, initialize it, which is a seperate step as it
-// creates a new thread in the game proc and we don't want to force that on games that don't
-// have native Steam controller implementations
-char rgchCWD[1024];
-_getcwd( rgchCWD, sizeof( rgchCWD ) );
-char rgchFullPath[1024];
-#if defined(_WIN32)
-_snprintf( rgchFullPath, sizeof( rgchFullPath ), "%s\\%s", rgchCWD, "controller.vdf" );
-#elif defined(OSX)
-// hack for now, because we do not have utility functions available for finding the resource path
-// alternatively we could disable the SteamController init on OS X
-_snprintf( rgchFullPath, sizeof( rgchFullPath ), "%s/steamworksexample.app/Contents/Resources/%s", rgchCWD, "controller.vdf" );
-#else
-_snprintf( rgchFullPath, sizeof( rgchFullPath ), "%s/%s", rgchCWD, "controller.vdf" );
-#endif
-const char *pchServerAddress, *pchLobbyID;
-ParseCommandLine( pchCmdLine, &pchServerAddress, &pchLobbyID );
-// do a DRM self check
-Steamworks_SelfCheck();
-// Construct a new instance of the game engine
-// bugbug jmccaskey - make screen resolution dynamic, maybe take it on command line?
-IGameEngine *pGameEngine =
-#if defined(_WIN32)
-new CGameEngineWin32( hInstance, nCmdShow, 1024, 768 );
-#elif defined(OSX)
-CreateGameEngineOSX();
-#elif defined(SDL)
-CreateGameEngineSDL( );
-#else
-#error	Need CreateGameEngine()
-#endif
-if ( !SteamController()->Init() )
-{
-OutputDebugString( "SteamController()->Init failed.\n" );
-Alert( "Fatal Error", "SteamController()->Init failed.\n" );
-return EXIT_FAILURE;
-}
-
-// This call will block and run until the game exits
-RunGameLoop( pGameEngine, pchServerAddress, pchLobbyID );
-// Shutdown the SteamAPI
-SteamAPI_Shutdown();
-// Shutdown Steam CEG
-Steamworks_TermCEGLibrary();
-// exit
-return EXIT_SUCCESS;
-}
-#endif
-//-----------------------------------------------------------------------------
-// Purpose: Main entry point for the program -- win32
-//-----------------------------------------------------------------------------
-#ifdef WIN32
-int APIENTRY WinMain(HINSTANCE hInstance,
-HINSTANCE hPrevInstance,
-LPSTR     lpCmdLine,
-int       nCmdShow)
-{
-// All we do here is call the real main function after setting up our se translator
-// this allows us to catch exceptions and report errors to Steam.
-//
-// Note that you must set your compiler flags correctly to enable structured exception
-// handling in order for this particular setup method to work.
-if ( IsDebuggerPresent() )
-{
-// We don't want to mask exceptions (or report them to Steam!) when debugging.
-// If you would like to step through the exception handler, attach a debugger
-// after running the game outside of the debugger.
-return RealMain( lpCmdLine, hInstance, nCmdShow );
-}
-_set_se_translator( MiniDumpFunction );
-try  // this try block allows the SE translator to work
-{
-return RealMain( lpCmdLine, hInstance, nCmdShow );
-}
-catch( ... )
-{
-return -1;
-}
-}
-#endif
-#ifdef OSX
-int main(int argc, const char **argv)
-{
-char szCmdLine[1024];
-char *pszStart = szCmdLine;
-char * const pszEnd = szCmdLine + V_ARRAYSIZE(szCmdLine);
-*szCmdLine = '\0';
-
-for ( int i = 1; i < argc; i++ )
-{
-const char *parm = argv[i];
-while ( *parm && (pszStart < pszEnd) )
-{
-*pszStart++ = *parm++;
-}
-
-if ( pszStart >= pszEnd )
-break;
-
-if ( i < argc-1 )
-*pszStart++ = ' ';
-}
-
-szCmdLine[V_ARRAYSIZE(szCmdLine) - 1] = '\0';
-
-return RealMain( szCmdLine, 0, 0 );
-}
-#endif
-#ifdef SDL
-int main(int argc, const char **argv)
-{
-char szCmdLine[1024];
-char *pszStart = szCmdLine;
-char * const pszEnd = szCmdLine + V_ARRAYSIZE(szCmdLine);
-*szCmdLine = '\0';
-for ( int i = 1; i < argc; i++ )
-{
-const char *parm = argv[i];
-while ( *parm && (pszStart < pszEnd) )
-{
-*pszStart++ = *parm++;
-}
-if ( pszStart >= pszEnd )
-break;
-if ( i < argc-1 )
-*pszStart++ = ' ';
-}
-szCmdLine[V_ARRAYSIZE(szCmdLine) - 1] = '\0';
-return RealMain( szCmdLine, 0, 0 );
-}
-#endif
-*/
-
 /*to do:
-test (today)
-opengl version (today)
-test (today)
-minimal network test (july 4)
-research sfml voice chat (?) (july 4)
-write minimal voice chat program (july 4)
-write minimal realtime networking test program with voice chat (july 4)
+test (july 3, done)
+opengl version (july 3, done)
+test (july 3, done)
+minimal network test (july 4, setup, needs testing)
+research sfml voice chat (?) (july 4, done partially, see bookmarks)
+write minimal voice chat program (july 5)
+write minimal realtime networking test program with voice chat (july 5)
+sdk... (elaborate on this)
 */
+
+#define SDL
 
 #include "steam/steam_api.h"
 #include <SDL.h>
 #include <cstddef>
+#include <Windows.h>
+#ifdef OPENGL
 #include "overhead.h"
 #include "image.h"
+#endif
+#ifdef SDL
+#include <SDL_image.h>
+#endif
+#include <fstream>
+
+class Network {
+public:
+	void onCreateLobby(LobbyCreated_t* result, bool failure);
+	void createLobby();
+	CCallResult<Network, LobbyCreated_t> callCreateResult;
+	uint64 lobbyID;
+	bool isLobbyMade;
+	inline void setIsLobbyMade(bool isLobbyMade) { this->isLobbyMade = isLobbyMade; }
+	void onJoinLobby(LobbyEnter_t* result, bool failure);
+	void joinLobby(CSteamID steamIDLobby);
+	CCallResult<Network, LobbyEnter_t> callJoinResult;
+};
+
+void Network::createLobby() {
+	SteamAPICall_t createLobbyCall = SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, 2);
+	callCreateResult.Set(createLobbyCall, this, &Network::onCreateLobby);
+}
+
+void Network::onCreateLobby(LobbyCreated_t* result, bool failure) {
+	isLobbyMade = true;
+	std::ofstream writeFile;
+	writeFile.open("log.txt");
+	if (!result->m_eResult == k_EResultOK || failure) {
+		writeFile << "lobby creation failed";
+		writeFile.close();
+		writeFile.clear();
+		return;
+	}
+	lobbyID = result->m_ulSteamIDLobby;
+	writeFile << "lobby creation succeeded, id = " << lobbyID;
+	writeFile.close();
+	writeFile.clear();
+}
+
+void Network::joinLobby(CSteamID steamIDLobby) {
+	SteamAPICall_t joinLobbyCall = SteamMatchmaking()->JoinLobby(steamIDLobby);
+	callJoinResult.Set(joinLobbyCall, this, &Network::onJoinLobby);
+}
+
+void Network::onJoinLobby(LobbyEnter_t* result, bool failure) {
+	isLobbyMade = true;
+	std::ofstream writeFile;
+	writeFile.open("log.txt");
+	if (!result->m_EChatRoomEnterResponse == k_EChatRoomEnterResponseSuccess || failure) {
+		writeFile << "lobby join failed";
+		writeFile.close();
+		writeFile.clear();
+		return;
+	}
+	lobbyID = result->m_ulSteamIDLobby;
+	writeFile << "lobby join succeeded, id = " << lobbyID;
+	writeFile.close();
+	writeFile.clear();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Extracts some feature from the command line
+//-----------------------------------------------------------------------------
+void parseCommandLine( const char *pchCmdLine, const char **ppchServerAddress, const char **ppchLobbyID ) {
+	// Look for the +connect ipaddress:port parameter in the command line,
+	// Steam will pass this when a user has used the Steam Server browser to find
+	// a server for our game and is trying to join it.
+	const char *pchConnectParam = "+connect";
+	const char *pchConnect = strstr( pchCmdLine, pchConnectParam );
+	*ppchServerAddress = NULL;
+	if ( pchConnect && strlen( pchCmdLine ) > (pchConnect - pchCmdLine) + strlen( pchConnectParam ) + 1 ) {
+		// Address should be right after the +connect, +1 on the end to skip the space
+		*ppchServerAddress = pchCmdLine + ( pchConnect - pchCmdLine ) + strlen( pchConnectParam ) + 1;
+	}
+	// look for +connect_lobby lobbyid paramter on the command line
+	// Steam will pass this in if a user taken up an invite to a lobby
+	const char *pchConnectLobbyParam = "+connect_lobby";
+	const char *pchConnectLobby = strstr( pchCmdLine, pchConnectParam );
+	*ppchLobbyID = NULL;
+	if ( pchConnectLobby && strlen( pchCmdLine ) > (pchConnectLobby - pchCmdLine) + strlen( pchConnectLobbyParam ) + 1 ) {
+		// Address should be right after the +connect, +1 on the end to skip the space
+		*ppchLobbyID = pchCmdLine + ( pchConnectLobby - pchCmdLine ) + strlen( pchConnectLobbyParam ) + 1;
+	}
+}
 
 int main(int argc, char* args[]) {
+	std::ifstream readFile;
+	readFile.open("host.txt");
+	char checkHost;
+	readFile >> checkHost;
+	readFile.close();
+	readFile.clear();
+	Network network;
+	CSteamID localID;
 	if (SteamAPI_RestartAppIfNecessary(k_uAppIdInvalid))
-	{
-		// if Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
-		// local Steam client and also launches this game again.
-
-		// Once you get a public Steam AppID assigned for this game, you need to replace k_uAppIdInvalid with it and
-		// removed steam_appid.txt from the game depot.
 		return 0;
-	}
 	if (!SteamAPI_Init())
-	{
 		return 0;
-	}
 	if (!SteamUser()->BLoggedOn())
-	{
 		return 0;
+	else
+		localID = SteamUser()->GetSteamID();
+	char pchCmdLine[1024];
+	pchCmdLine[0] = '\0';
+	int current = 0;
+	for (int a = 1; a < argc; ++a) {
+		char input;
+		for (int b = 0, input = '-'; input != '\0'; ++b) {
+			input = args[a][b];
+			pchCmdLine[current] = input;
+			++current;
+		}
+		if (a + 1 != argc) {
+			pchCmdLine[current] = ' ';
+			++current;
+		}
+		else
+			pchCmdLine[current] = '\0';
+	}
+	const char *pchServerAddress, *pchLobbyID;
+	pchServerAddress = NULL;
+	pchLobbyID = NULL;
+	parseCommandLine(pchCmdLine, &pchServerAddress, &pchLobbyID);
+	std::ofstream writeFile;
+	writeFile.open("log2.txt");
+	if (pchLobbyID != NULL)
+		writeFile << pchLobbyID;
+	else
+		writeFile << "nothing in pchLobbyID";
+	if (pchCmdLine[0] != '\0')
+		writeFile << pchCmdLine;
+	else
+		writeFile << "nothing on command line";
+	writeFile.close();
+	writeFile.clear();
+	if (checkHost == 'y') {
+		network.setIsLobbyMade(false);
+		network.createLobby();
+	}
+	else {
+		network.setIsLobbyMade(false);
+		CSteamID lobbyID((uint64)_atoi64(pchLobbyID));
+		network.joinLobby(lobbyID);
+	}
+	while (network.isLobbyMade == false) {
+		SteamAPI_RunCallbacks();
 	}
 	int screenWidth = 800;
 	int screenHeight = 600;
+#ifdef OPENGL
 	size_t screenSize = screenHeight * screenWidth * 4;
 	uint8_t* screen = new uint8_t[screenSize];
 	Overhead overhead(screenWidth, screenHeight, "opengl test", screen);
 	int imageNum = 1;
 	Image* image = new Image[imageNum];
 	image[0].setupImage("test.img");
+#endif
+#ifdef SDL
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Window* window = SDL_CreateWindow("steam sdl test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	IMG_Init(IMG_INIT_PNG);
+	SDL_Surface* surface = IMG_Load("test.png");
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+#endif
 	bool quit = false;
 	SDL_Event event;
 	while (!quit) {
@@ -370,11 +199,28 @@ int main(int argc, char* args[]) {
 			if (event.type == SDL_QUIT)
 				quit = true;
 		}
+#ifdef OPENGL
 		image[0].writePixels(screen, 0, 0, screenWidth, screenHeight);
 		overhead.render(screen);
+#endif
+#ifdef SDL
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+#endif
 	}
+	SteamMatchmaking()->LeaveLobby(network.lobbyID);
 	SteamAPI_Shutdown();
+#ifdef OPENGL
 	delete[] screen;
 	delete[] image;
+#endif
+#ifdef SDL
+	SDL_DestroyTexture(texture);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	IMG_Quit();
+	SDL_Quit();
+#endif
 	return 0;
 }
