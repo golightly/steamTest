@@ -1,3 +1,5 @@
+test
+
 if the preprocessor definitions in the project settings define win32 (as opposed to osx or sdl)
 
 main.cpp -> int APIENTRY WinMain(HINSTANCE hInstance,
