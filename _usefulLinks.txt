@@ -1,0 +1,48 @@
+basic stuff, overview
+
+https://partner.steamgames.com/doc/features/multiplayer/matchmaking
+
+more overview on steam implementation
+
+https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking
+
+creating a lobby https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
+
+https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
+
+get data on other users in the lobby 
+
+https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData
+
+get number of other users in the lobby
+
+https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers
+
+get the id of another lobby member by index
+
+https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex
+
+leave lobby
+
+https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby
+
+after the user sends the host a first packet, the host chooses whether to accept or not
+
+https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
+
+close a connection with a user
+
+https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
+
+checks if a packet is available to read on a specific channel
+
+https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable
+
+reads a packet
+
+https://partner.steamgames.com/doc/api/ISteamNetworking#Readp2PPacket
+
+send packet to specified user/opens connection
+
+https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
+
