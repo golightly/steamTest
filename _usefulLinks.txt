@@ -68,7 +68,7 @@ writeFile << "other user id: " << otherUserID << "at index: " << otherUserIndex 
 set hasUserJoined to true, and stop checking
 
 
-2) set a different coloured block controlled by each user laid over the background (if player is host they are black0, if not they
+2) set a different coloured block controlled by each user laid over the background (if player is host they are block0, if not they
 are block1) and have them each control their black on the bounds of the screen (ie. collide with edges).
 
 have the user send a packet to the host after the usercount check is complete and the user has both steamids
