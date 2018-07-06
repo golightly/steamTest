@@ -6,7 +6,7 @@ more overview on steam implementation
 
 https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking
 
-creating a lobby https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
+creating a lobby
 
 https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
 
@@ -46,3 +46,47 @@ send packet to specified user/opens connection
 
 https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
 
+
+
+plan:
+
+1) test if it's possible to connect to a lobby if the user knows the lobby id
+
+have the host record the lobby id in a .txt file called lobbyID.txt
+
+transfer this to the user
+
+have the user read the file into a c++ string then convert to uint64 or whatever the required type is
+use that to join the lobby
+
+set a bool hasUserJoined to false
+have both user and host check in the main loop to see if the usercount has increased to 2
+get the steamid of the host/other user, track which is which
+compare the id at 0 with your own id, which you already have, and set accordingly
+if it has, print the steamid of both the user and the other user like so
+writeFile << "other user id: " << otherUserID << "at index: " << otherUserIndex << " my id: " << myID << " at index: " << myIndex;
+set hasUserJoined to true, and stop checking
+
+
+2) set a different coloured block controlled by each user laid over the background (if player is host they are black0, if not they
+are block1) and have them each control their black on the bounds of the screen (ie. collide with edges).
+
+have the user send a packet to the host after the usercount check is complete and the user has both steamids
+the user runs a P2PSessionRequest_t callback to determine if the message was sent successfully
+and a P2PSessionConnectFail_t callback to determine if the message was received successfully
+if th user receives a connection fail callback, the program records "failed to connect to host" in log.txt and quits
+in this case the host will have to manually quit
+
+have the host check for calback P2PSessionRequest_t.  If one is received, run AcceptP2PSessionWithUser with that user's steamid
+
+have both leave the lobby
+
+if this succeeds, add both user sprites into the program, and have the user and host regularly send/read their velocities to each other
+
+when the host is done, it calls CloseP2PSessionWithUser with their steamid
+
+the user and host should be updating each other faster than the rest of the program runs, don't have them be subject to the
+framerate required by vsyncing
+
+
+3) implement voice chat using sfml example
