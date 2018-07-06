@@ -111,6 +111,14 @@ void parseCommandLine( const char *pchCmdLine, const char **ppchServerAddress, c
 }
 
 int main(int argc, char* args[]) {
+	std::ofstream writeFile;
+	writeFile.open("log2.txt");
+	if (argc > 1)
+		writeFile << args[1];
+	else
+		writeFile << "no command line arguments";
+	writeFile.close();
+	writeFile.clear();
 	std::ifstream readFile;
 	readFile.open("host.txt");
 	char checkHost;
@@ -148,18 +156,6 @@ int main(int argc, char* args[]) {
 	pchServerAddress = NULL;
 	pchLobbyID = NULL;
 	parseCommandLine(pchCmdLine, &pchServerAddress, &pchLobbyID);
-	std::ofstream writeFile;
-	writeFile.open("log2.txt");
-	if (pchLobbyID != NULL)
-		writeFile << pchLobbyID;
-	else
-		writeFile << "nothing in pchLobbyID";
-	if (pchCmdLine[0] != '\0')
-		writeFile << pchCmdLine;
-	else
-		writeFile << "nothing on command line";
-	writeFile.close();
-	writeFile.clear();
 	if (checkHost == 'y') {
 		network.setIsLobbyMade(false);
 		network.createLobby();
