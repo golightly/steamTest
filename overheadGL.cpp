@@ -1,4 +1,5 @@
-#include "overhead.h"
+#include "definitions.h"
+
 #include <cstddef>
 #include <SDL.h>
 #include <GL/glew.h>
@@ -7,9 +8,10 @@
 #include "shader.h"
 #include "texAttribute.h"
 
-Overhead::Overhead(int screenWidth, int screenHeight, const char* programName, uint8_t* screen) {
+Overhead::Overhead(int screenWidth, int screenHeight, const char* programName) {
   	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
+	screen = new uint8_t[screenWidth * screenHeight * 4];
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -42,9 +44,13 @@ Overhead::~Overhead() {
   SDL_DestroyWindow(window);
   window = NULL;
   SDL_Quit();
+  delete[] screen;
 }
 
-void Overhead::render(uint8_t* screen) {
+void Overhead::render(int imageNum, Image* image) {
+	for (int a = 0; a < imageNum; ++a) {
+		image[a].writePixels(screen, 0, 0, screenWidth, screenHeight);
+	}
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, screenWidth, screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, screen);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	SDL_GL_SwapWindow(window);

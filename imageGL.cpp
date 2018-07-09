@@ -1,4 +1,4 @@
-#include "image.h"
+#include "definitions.h"
 #include <fstream>
 #include <cstdint>
 
