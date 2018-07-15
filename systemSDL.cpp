@@ -1,9 +1,9 @@
-#include "definitions.h"
-
+#include "systemSDL.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include "imageSDL.h"
 
-Overhead::Overhead(int screenWidth, int screenHeight, const char* programName) {
+SystemSDL::SystemSDL(int screenWidth, int screenHeight, const char* programName) {
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 	SDL_Init(SDL_INIT_VIDEO);
@@ -13,14 +13,15 @@ Overhead::Overhead(int screenWidth, int screenHeight, const char* programName) {
 	IMG_Init(IMG_INIT_PNG);
 }
 
-Overhead::~Overhead() {
+SystemSDL::~SystemSDL() {
+	delete[] image;
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();
 	SDL_Quit();
 }
 
-void Overhead::render(int imageNum, Image* image) {
+void SystemSDL::render() {
 	SDL_RenderClear(renderer);
 	for (int a = 0; a < imageNum; ++a) {
 		SDL_RenderCopy(renderer, image[a].getTexture(), NULL, NULL);

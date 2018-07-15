@@ -1,8 +1,8 @@
-#include "definitions.h"
+#include "imageGL.h"
 #include <fstream>
 #include <cstdint>
 
-void Image::setupImage(const char* filePath) {
+void ImageGL::setupImage(const char* filePath) {
 	std::ifstream readFile;
 	readFile.open(filePath, std::ios::in | std::ios::beg | std::ios::binary);
 	readFile.read(reinterpret_cast<char*>(&width), sizeof(uint16_t));
@@ -13,7 +13,7 @@ void Image::setupImage(const char* filePath) {
 	readFile.clear();
 }
 
-void Image::writePixels(uint8_t* screen, int x, int y, int screenWidth, int screenHeight) { 
+void ImageGL::writePixels(uint8_t* screen, int x, int y, int screenWidth, int screenHeight) { 
 	bool transparent = false;
 	size_t startpos = (y * (screenWidth * 4)) + (x * 4);
 	for (int a = 0; a < height; ++a) {

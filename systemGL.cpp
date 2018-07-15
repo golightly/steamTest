@@ -1,5 +1,4 @@
-#include "definitions.h"
-
+#include "systemGL.h"
 #include <cstddef>
 #include <SDL.h>
 #include <GL/glew.h>
@@ -7,8 +6,9 @@
 #include <gl/glu.h>
 #include "shader.h"
 #include "texAttribute.h"
+#include "imageGL.h"
 
-Overhead::Overhead(int screenWidth, int screenHeight, const char* programName) {
+SystemGL::SystemGL(int screenWidth, int screenHeight, const char* programName) {
   	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 	screen = new uint8_t[screenWidth * screenHeight * 4];
@@ -34,9 +34,11 @@ Overhead::Overhead(int screenWidth, int screenHeight, const char* programName) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	image = NULL;
+	imageNum = 0;
 }
 
-Overhead::~Overhead() {
+SystemGL::~SystemGL() {
   glDeleteTextures(1, &texture);
   shader->shutdown();
   delete shader;
@@ -45,9 +47,10 @@ Overhead::~Overhead() {
   window = NULL;
   SDL_Quit();
   delete[] screen;
+  delete[] image;
 }
 
-void Overhead::render(int imageNum, Image* image) {
+void SystemGL::render() {
 	for (int a = 0; a < imageNum; ++a) {
 		image[a].writePixels(screen, 0, 0, screenWidth, screenHeight);
 	}

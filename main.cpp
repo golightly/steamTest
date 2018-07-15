@@ -15,8 +15,9 @@ write minimal realtime networking test program with voice chat (july 5)
 sdk... (elaborate on this)
 */
 
-#include "definitions.h"
-
+#include "program.h"
+#include "systemGL.h"
+#include "systemSDL.h"
 #include "steam/steam_api.h"
 #include <SDL.h>
 #include <cstddef>
@@ -104,29 +105,13 @@ int main(int argc, char* args[]) {
 	int screenWidth = 800;
 	int screenHeight = 600;
 	int imageNum = 1;
-	Overhead overhead(screenWidth, screenHeight, "steam test");
-	if (overhead.renderer == NULL) {
-		std::cout << "renderer null in main" << std::endl;
-		std::ofstream writeFile;
-		writeFile.open("errorLog.txt", std::ios::app);
-		writeFile << "renderer null in main\n";
-		writeFile.close();
-		writeFile.clear();
-	}
-	else if (overhead.renderer != NULL) {
-		std::cout << "renderer good in main" << std::endl;
-		std::ofstream writeFile;
-		writeFile.open("errorLog.txt", std::ios::app);
-		writeFile << "renderer good in main\n";
-		writeFile.close();
-		writeFile.clear();
-	}
+	Program<SystemGL> program(screenWidth, screenHeight, "steam test");
+	program.system->initImage(imageNum);
 	const char** imagePath;
 	imagePath = new const char*[imageNum];
 	imagePath[0] = "test";
-	Image* image = new Image[imageNum];
 	for (int a = 0; a < imageNum; ++a) {
-		IMAGE_SETUP
+		program.system->setupImage(imagePath[a], a);
 	}
 	bool quit = false;
 	SDL_Event event;
@@ -135,11 +120,11 @@ int main(int argc, char* args[]) {
 			if (event.type == SDL_QUIT)
 				quit = true;
 		}
-		overhead.render(imageNum, image);
+		program.system->render();
 	}
 	SteamMatchmaking()->LeaveLobby(network.lobbyID);
 	SteamAPI_Shutdown();
-	delete[] image;
+	program.~Program();
 	delete[] imagePath;
 	return 0;
 }
