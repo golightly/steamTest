@@ -3,14 +3,28 @@
 #include <cstdint>
 
 void ImageGL::setupImage(const char* filePath) {
+	int count = 0;
+	for ( ; filePath[count] != '\0'; ++count) {}
+	++count;
+	count += 4;
+	char* imagePath = new char[count];
+	for (int a = 0; a < count - 5; ++a) {
+		imagePath[a] = filePath[a];
+	}
+	imagePath[count - 5] = '.';
+	imagePath[count - 4] = 'i';
+	imagePath[count - 3] = 'm';
+	imagePath[count - 2] = 'g';
+	imagePath[count - 1] = '\0';
 	std::ifstream readFile;
-	readFile.open(filePath, std::ios::in | std::ios::beg | std::ios::binary);
+	readFile.open(imagePath, std::ios::in | std::ios::beg | std::ios::binary);
 	readFile.read(reinterpret_cast<char*>(&width), sizeof(uint16_t));
 	readFile.read(reinterpret_cast<char*>(&height), sizeof(uint16_t));
 	pixels = new uint8_t[width * height * 4];
 	readFile.read(reinterpret_cast<char*>(pixels), sizeof(uint8_t) * (width * height * 4));
 	readFile.close();
 	readFile.clear();
+	delete[] imagePath;
 }
 
 void ImageGL::writePixels(uint8_t* screen, int x, int y, int screenWidth, int screenHeight) { 

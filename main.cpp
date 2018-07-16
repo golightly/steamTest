@@ -105,7 +105,7 @@ int main(int argc, char* args[]) {
 	int screenWidth = 800;
 	int screenHeight = 600;
 	int imageNum = 1;
-	Program<SystemGL> program(screenWidth, screenHeight, "steam test");
+	Program<SystemSDL> program(screenWidth, screenHeight, "steam test");
 	program.system->initImage(imageNum);
 	const char** imagePath;
 	imagePath = new const char*[imageNum];
