@@ -87,7 +87,7 @@ int main(int argc, char* args[]) {
 		network.createLobby();
 	}
 	else {
-		char input;
+		/*char input;
 		std::ifstream readFile;
 		readFile.open("lobbyID.txt");
 		while (readFile >> input) {
@@ -95,7 +95,7 @@ int main(int argc, char* args[]) {
 		}
 		readFile.close();
 		readFile.clear();
-		network.setIsLobbyMade(false);
+		network.setIsLobbyMade(false);*/ //only needed till steam is bought
 		CSteamID lobbyID((uint64)_atoi64(pchLobbyID));
 		network.joinLobby(lobbyID);
 	}
