@@ -1,1 +1,2 @@
-
+basic: a single or multiplayer game about cyberpunk gangs in a city on mars (see other notes).  create a core party of characters
+either from pre-existing characters, randomize or create your own, and customize your gang.  work on this a lot more...
